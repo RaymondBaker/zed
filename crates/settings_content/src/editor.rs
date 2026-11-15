@@ -151,6 +151,18 @@ pub struct EditorSettingsContent {
     /// Default: true
     pub middle_click_paste: Option<bool>,
 
+    /// Whether dragging a number up or down while holding cmd (ctrl on Linux and Windows)
+    /// increments or decrements it
+    ///
+    /// Default: true
+    pub drag_to_adjust_numbers: Option<bool>,
+
+    /// Actions to run after a number has been changed by dragging it. Each entry can be limited
+    /// to a context, using the same syntax as the `context` of a keymap binding.
+    ///
+    /// Default: []
+    pub number_drag_end_actions: Option<Vec<NumberDragEndActionsContent>>,
+
     /// What to do when multibuffer is double clicked in some of its excerpts
     /// (parts of singleton buffers).
     ///
@@ -1035,6 +1047,20 @@ pub struct JupyterContent {
     ///
     /// Default: `{}`
     pub kernel_selections: Option<HashMap<String, String>>,
+}
+
+/// Actions to run after a number has been changed by dragging it.
+#[with_fallible_options]
+#[derive(Clone, Default, Debug, Serialize, Deserialize, JsonSchema, MergeFrom, PartialEq, Eq)]
+pub struct NumberDragEndActionsContent {
+    /// The context in which to run the actions, using the same syntax as the `context` of a
+    /// keymap binding, e.g. `"Editor && language == Python"`. In addition to the editor's usual
+    /// keymap context, `language` is set to the name of the language of the dragged number.
+    /// When omitted, the actions always run.
+    pub context: Option<String>,
+
+    /// Names of the actions to run, in order, e.g. `["workspace::Save", "task::Rerun"]`
+    pub actions: Option<Vec<String>>,
 }
 
 /// Whether to allow drag and drop text selection in buffer.

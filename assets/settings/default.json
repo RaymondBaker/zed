@@ -743,6 +743,21 @@
   },
   // Enable middle-click paste on Linux.
   "middle_click_paste": true,
+  // Whether dragging a number up or down while holding cmd (ctrl on Linux and Windows)
+  // increments or decrements it. Moving the mouse left or right increases the step size.
+  "drag_to_adjust_numbers": true,
+  // Actions to run after a number has been changed by dragging it. Each entry lists action
+  // names to run in order, and can be limited to a context using the same syntax as the
+  // "context" of a keymap binding. In addition to the editor's usual keymap context,
+  // "language" is set to the name of the language of the dragged number. For example:
+  //
+  // "number_drag_end_actions": [
+  //   {
+  //     "context": "Editor && language == Python",
+  //     "actions": ["workspace::Save", "task::Rerun"]
+  //   }
+  // ]
+  "number_drag_end_actions": [],
   // What to do when multibuffer is double clicked in some of its excerpts
   // (parts of singleton buffers).
   // May take 2 values:

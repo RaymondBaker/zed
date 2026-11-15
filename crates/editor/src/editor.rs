@@ -73,6 +73,7 @@ mod edit_prediction;
 mod input;
 mod markdown_actions;
 mod navigation;
+mod number_drag;
 mod rewrap;
 mod selection;
 
@@ -1173,6 +1174,7 @@ pub struct Editor {
     gutter_hover_button: (Option<GutterHoverButton>, Option<Task<()>>),
     pub(crate) gutter_diff_review_indicator: (Option<PhantomDiffReviewIndicator>, Option<Task<()>>),
     pub(crate) diff_review_drag_state: Option<DiffReviewDragState>,
+    pub(crate) number_drag_state: Option<number_drag::NumberDragState>,
     /// Active diff review overlays. Multiple overlays can be open simultaneously
     /// when hunks have comments stored.
     pub(crate) diff_review_overlays: Vec<DiffReviewOverlay>,
@@ -2550,6 +2552,7 @@ impl Editor {
             gutter_hover_button: (None, None),
             gutter_diff_review_indicator: (None, None),
             diff_review_drag_state: None,
+            number_drag_state: None,
             diff_review_overlays: Vec::new(),
             stored_review_comments: Vec::new(),
             next_review_comment_id: 0,

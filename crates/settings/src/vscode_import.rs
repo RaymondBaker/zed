@@ -286,6 +286,7 @@ impl VsCodeSettings {
             diagnostics_max_severity: None,
             double_click_in_multibuffer: None,
             drag_and_drop_selection: None,
+            drag_to_adjust_numbers: None,
             excerpt_context_lines: None,
             expand_excerpt_lines: None,
             fast_scroll_sensitivity: self.read_f32("editor.fastScrollSensitivity"),
@@ -313,6 +314,7 @@ impl VsCodeSettings {
                 "alt" => Some(MultiCursorModifier::Alt),
                 _ => None,
             }),
+            number_drag_end_actions: None,
             redact_private_values: None,
             relative_line_numbers: self.read_enum("editor.lineNumbers", |s| match s {
                 "relative" => Some(RelativeLineNumbers::Enabled),

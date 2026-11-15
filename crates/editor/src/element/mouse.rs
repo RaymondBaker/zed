@@ -579,6 +579,8 @@ impl EditorElement {
             return;
         }
 
+        editor.end_number_drag(window, cx);
+
         let text_hitbox = &position_map.text_hitbox;
         let gutter_hitbox = &position_map.gutter_hitbox;
         let point_for_position = position_map.point_for_position(event.position);
@@ -652,6 +654,27 @@ impl EditorElement {
                 cx.stop_propagation();
                 return;
             }
+        }
+
+        // Ctrl-Drag on number to increment
+        if click_count == 1
+            && text_hitbox.is_hovered(window)
+            && modifiers.number_of_modifiers() == 1
+            && Editor::is_cmd_or_ctrl_pressed(&modifiers, cx)
+            && hint_glyph.is_none()
+            && EditorSettings::get_global(cx).drag_to_adjust_numbers
+            && !editor.read_only(cx)
+            && let Some(position) = point_for_position.as_valid()
+            && editor.begin_number_drag(
+                position,
+                event.position,
+                &position_map.snapshot,
+                window,
+                cx,
+            )
+        {
+            cx.stop_propagation();
+            return;
         }
 
         if EditorSettings::get_global(cx)
@@ -874,6 +897,11 @@ impl EditorElement {
             return;
         }
 
+        if editor.end_number_drag(window, cx) {
+            cx.stop_propagation();
+            return;
+        }
+
         let text_hitbox = &position_map.text_hitbox;
         let end_selection = editor.has_pending_selection();
         let pending_nonempty_selections = editor.has_pending_nonempty_selection();
@@ -973,6 +1001,12 @@ impl EditorElement {
         window: &mut Window,
         cx: &mut Context<Editor>,
     ) {
+        // Releasing the mouse after dragging a number must not also follow a link.
+        if editor.end_number_drag(window, cx) {
+            cx.stop_propagation();
+            return;
+        }
+
         let text_hitbox = &position_map.text_hitbox;
         let pending_nonempty_selections = editor.has_pending_nonempty_selection();
 
@@ -1045,6 +1079,13 @@ impl EditorElement {
         window: &mut Window,
         cx: &mut Context<Editor>,
     ) {
+        if editor.number_drag_state.is_some() {
+            if event.pressed_button == Some(MouseButton::Left) {
+                editor.update_number_drag(event.position, window, cx);
+            }
+            return;
+        }
+
         if editor.has_autoscroll_request()
             || !editor.has_pending_selection()
                 && matches!(editor.selection_drag_state, SelectionDragState::None)

@@ -5919,6 +5919,11 @@ impl EditorElement {
                 ) {
                     window
                         .set_cursor_style(CursorStyle::DragCopy, &layout.position_map.text_hitbox);
+                } else if editor.is_dragging_number() {
+                    window.set_cursor_style(
+                        CursorStyle::ResizeUpDown,
+                        &layout.position_map.text_hitbox,
+                    );
                 } else if editor
                     .hovered_link_state
                     .as_ref()
@@ -6878,6 +6883,70 @@ impl EditorElement {
                     }
                 });
             }
+        }
+    }
+
+    fn paint_number_drag_indicator(
+        &mut self,
+        layout: &mut EditorLayout,
+        window: &mut Window,
+        cx: &mut App,
+    ) {
+        let position_map = &layout.position_map;
+        let Some(range) = self
+            .editor
+            .read(cx)
+            .number_drag_display_range(&position_map.snapshot)
+        else {
+            return;
+        };
+        let row = range.start.row();
+        let Some(line_layout) = row
+            .0
+            .checked_sub(position_map.visible_row_range.start.0)
+            .and_then(|index| position_map.line_layouts.get(index as usize))
+        else {
+            return;
+        };
+
+        let alignment_offset =
+            line_layout.alignment_offset(position_map.text_align, position_map.content_width);
+        let x_for_column = |column: u32| {
+            position_map.content_origin.x
+                + Pixels::from(
+                    ScrollPixelOffset::from(
+                        line_layout.x_for_index(column as usize) + alignment_offset,
+                    ) - position_map.scroll_pixel_position.x,
+                )
+        };
+        let left = x_for_column(range.start.column());
+        let right = x_for_column(range.end.column());
+        let top = position_map.content_origin.y
+            + Pixels::from(
+                (row.0 as f64 - position_map.scroll_position.y)
+                    * ScrollOffset::from(position_map.line_height),
+            );
+        let number_bounds = Bounds::new(
+            point(left, top),
+            size(right - left, position_map.line_height),
+        );
+
+        let Some((line_start, line_end)) =
+            crate::number_drag::indicator_line(window.mouse_position(), number_bounds)
+        else {
+            return;
+        };
+        let mut builder = gpui::PathBuilder::stroke(px(1.5));
+        builder.move_to(line_start);
+        builder.line_to(line_end);
+        if let Some(path) = builder.build().log_err() {
+            let color = cx.theme().players().local().cursor;
+            window.with_content_mask(
+                Some(ContentMask {
+                    bounds: position_map.text_hitbox.bounds,
+                }),
+                |window| window.paint_path(path, color),
+            );
         }
     }
 
@@ -10146,6 +10215,7 @@ impl Element for EditorElement {
                         }
 
                         self.paint_text(layout, window, cx);
+                        self.paint_number_drag_indicator(layout, window, cx);
 
                         if !layout.spacer_blocks.is_empty() {
                             window.with_element_namespace("blocks", |window| {

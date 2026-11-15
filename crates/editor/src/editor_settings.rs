@@ -7,7 +7,8 @@ pub use settings::{
     CodeLens, CompletionDetailAlignment, CompletionMenuItemKind, CurrentLineHighlight, DelayMs,
     DiffViewStyle, DisplayIn, DocumentColorsRenderMode, DoubleClickInMultibuffer, GitGutterWidth,
     GoToDefinitionFallback, GoToDefinitionScrollStrategy, MinimapThumb, MinimapThumbBorder,
-    MultiCursorModifier, OpenResultsIn, ScrollBeyondLastLine, ScrollbarDiagnostics,
+    MultiCursorModifier, NumberDragEndActionsContent, OpenResultsIn, ScrollBeyondLastLine,
+    ScrollbarDiagnostics,
     SeedQuerySetting, ShowMinimap, SnippetSortOrder,
 };
 use settings::{RegisterSetting, RelativeLineNumbers, Settings};
@@ -48,6 +49,8 @@ pub struct EditorSettings {
     pub expand_excerpt_lines: u32,
     pub excerpt_context_lines: u32,
     pub middle_click_paste: bool,
+    pub drag_to_adjust_numbers: bool,
+    pub number_drag_end_actions: Vec<NumberDragEndActionsContent>,
     pub double_click_in_multibuffer: DoubleClickInMultibuffer,
     pub search_wrap: bool,
     pub search: SearchSettings,
@@ -315,6 +318,8 @@ impl Settings for EditorSettings {
             expand_excerpt_lines: editor.expand_excerpt_lines.unwrap(),
             excerpt_context_lines: editor.excerpt_context_lines.unwrap(),
             middle_click_paste: editor.middle_click_paste.unwrap(),
+            drag_to_adjust_numbers: editor.drag_to_adjust_numbers.unwrap(),
+            number_drag_end_actions: editor.number_drag_end_actions.unwrap(),
             double_click_in_multibuffer: editor.double_click_in_multibuffer.unwrap(),
             search_wrap: editor.search_wrap.unwrap(),
             search: SearchSettings {
