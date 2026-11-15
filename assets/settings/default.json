@@ -745,7 +745,7 @@
   "middle_click_paste": true,
   // Whether dragging a number up or down while holding cmd (ctrl on Linux and Windows)
   // increments or decrements it. Moving the mouse left or right increases the step size.
-  "drag_to_adjust_numbers": true,
+  "number_drag": true,
   // Actions to run after a number has been changed by dragging it. Each entry lists action
   // names to run in order, and can be limited to a context using the same syntax as the
   // "context" of a keymap binding. In addition to the editor's usual keymap context,

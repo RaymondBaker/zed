@@ -155,7 +155,7 @@ pub struct EditorSettingsContent {
     /// increments or decrements it
     ///
     /// Default: true
-    pub drag_to_adjust_numbers: Option<bool>,
+    pub number_drag: Option<bool>,
 
     /// Actions to run after a number has been changed by dragging it. Each entry can be limited
     /// to a context, using the same syntax as the `context` of a keymap binding.

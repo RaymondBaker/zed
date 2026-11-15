@@ -662,7 +662,7 @@ impl EditorElement {
             && modifiers.number_of_modifiers() == 1
             && Editor::is_cmd_or_ctrl_pressed(&modifiers, cx)
             && hint_glyph.is_none()
-            && EditorSettings::get_global(cx).drag_to_adjust_numbers
+            && EditorSettings::get_global(cx).number_drag
             && !editor.read_only(cx)
             && let Some(position) = point_for_position.as_valid()
             && editor.begin_number_drag(
